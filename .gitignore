@@ -1,0 +1,7 @@
+out/
+vscode/
+metals/
+scala-build/
+.metals/
+.bsp/
+.vscode/

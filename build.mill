@@ -1,0 +1,27 @@
+//| mill-jvm-version: 21
+//| mill-version: 1.0.4
+//| mvnDeps:
+//| - io.github.quafadas:sjsls_plugin_mill1_3.7:0.2.12
+
+import io.github.quafadas.ScalaJsRefreshModule
+import mill.*,scalajslib.*
+import mill.scalalib.*
+
+object `package` extends ScalaJsRefreshModule:
+  def scalaVersion = "3.7.2"
+  def scalaJSVersion = "1.19.0"
+
+  override def logLevel = "warn"
+
+  override def withStyles = false
+
+  def mvnDeps = Task{
+    super.mvnDeps() ++
+      Seq(
+        mvn"org.scala-js::scalajs-dom::2.8.0",
+        mvn"com.raquo::laminar::17.2.0"
+      )
+
+    }
+
+
