@@ -1,19 +1,76 @@
-//| mill-jvm-version: 21
-//| mill-version: 1.0.4
+//| mill-jvm-version: 24
+//| mill-version: 1.0.5
 //| mvnDeps:
 //| - io.github.quafadas:sjsls_plugin_mill1_3.7:0.2.12
+//| - com.github.lolgab:mill-scalablytyped_mill1_3:0.3.1-3-9207ad
+
+package build
 
 import io.github.quafadas.ScalaJsRefreshModule
 import mill.*,scalajslib.*
 import mill.scalalib.*
+import com.github.lolgab.mill.scalablytyped.*
+import mill.scalajslib.api.ModuleKind
+import mill.api.Task.Simple
+import mill.scalajslib.api.ESModuleImportMapping
+import mill.api.Task.Simple
+import mill.api.Task.Simple
 
-object `package` extends ScalaJsRefreshModule:
-  def scalaVersion = "3.7.2"
-  def scalaJSVersion = "1.19.0"
+trait Versions extends ScalaJSModule:
+  def scalaVersion = Task{"3.7.3"}
+  def scalaJSVersion = Task{"1.20.1"}
 
+
+
+object app extends ScalaJsRefreshModule with Versions:
   override def logLevel = "warn"
+  // def scalaVersion = Task("3.7.3")
 
-  override def withStyles = false
+  override def indexHtml: Simple[PathRef] = Task{
+
+
+    val html = """<html>
+    <head>
+        <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate"/>
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.core.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+        <link rel="stylesheet/less" type="text/css" href="/index.less"/>
+    </head>
+    <body>
+
+
+
+        <script src="/main.js" type="module"></script>
+        <div id="app"></div>
+        <script>
+        const sse = new EventSource('/refresh/v1/sse');
+        sse.addEventListener('message', (e) => {
+            const msg = JSON.parse(e.data)
+
+            if ('KeepAlive' in msg)
+                console.log("KeepAlive")
+
+            if ('PageRefresh' in msg)
+                location.reload()
+        });
+        </script>
+    </body>
+    </html>"""
+    os.write.over(Task.dest / "index.html", html)
+    PathRef(Task.dest / "index.html")
+  }
+
+  override def withStyles = true
+
+  def moduleDeps = Seq(QuillST)
+
+  override def moduleKind: Simple[ModuleKind] = ModuleKind.ESModule
+
+  override def scalaJSImportMap: Simple[Seq[ESModuleImportMapping]] = Seq(
+    ESModuleImportMapping.Prefix("quill/quill", "https://esm.run/quill@2.0.3/dist/quill.js"),
+    ESModuleImportMapping.Prefix("quill/core", "https://esm.run/quill@2.0.3/dist/quill.core.js"),
+    ESModuleImportMapping.Prefix("quill/themes/snow", "https://esm.run/quill@2.0.3/dist/quill.snow.js")
+  )
 
   def mvnDeps = Task{
     super.mvnDeps() ++
@@ -24,4 +81,4 @@ object `package` extends ScalaJsRefreshModule:
 
     }
 
-
+object QuillST extends Versions with ScalablyTyped
