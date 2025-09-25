@@ -6,3 +6,4 @@ scala-build/
 .bsp/
 .vscode/
 node_modules/
+.playwright-mcp/
