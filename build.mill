@@ -34,11 +34,28 @@ object app extends ScalaJsRefreshModule with Versions:
         <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate"/>
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.core.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+        <script type="module" src="https://early.webawesome.com/webawesome@3.0.0-beta.6/dist/webawesome.loader.js"></script>
+        <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-beta.6/dist/styles/webawesome.css" />
         <link rel="stylesheet/less" type="text/css" href="/index.less"/>
     </head>
     <body>
 
-
+        <script>
+          less = {
+            env: "development",
+            async: false,
+            fileAsync: false,
+            poll: 1000,
+            functions: {},
+            dumpLineNumbers: "comments",
+            relativeUrls: false,
+            rootpath: ":/a.com/"
+          };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/less"></script>
+        <script>
+          less.watch();
+        </script>
 
         <script src="/main.js" type="module"></script>
         <div id="app"></div>
@@ -69,14 +86,17 @@ object app extends ScalaJsRefreshModule with Versions:
   override def scalaJSImportMap: Simple[Seq[ESModuleImportMapping]] = Seq(
     ESModuleImportMapping.Prefix("quill/quill", "https://esm.run/quill@2.0.3/dist/quill.js"),
     ESModuleImportMapping.Prefix("quill/core", "https://esm.run/quill@2.0.3/dist/quill.core.js"),
-    ESModuleImportMapping.Prefix("quill/themes/snow", "https://esm.run/quill@2.0.3/dist/quill.snow.js")
+    ESModuleImportMapping.Prefix("quill/themes/snow", "https://esm.run/quill@2.0.3/dist/quill.snow.js"),
+    ESModuleImportMapping.Prefix("turndown", "https://cdn.jsdelivr.net/npm/turndown@7.2.1/+esm"),
+    ESModuleImportMapping.Prefix("@awesome.me/webawesome/dist/", "https://early.webawesome.com/webawesome@3.0.0-beta.6/dist/")
   )
 
   def mvnDeps = Task{
     super.mvnDeps() ++
       Seq(
         mvn"org.scala-js::scalajs-dom::2.8.0",
-        mvn"com.raquo::laminar::17.2.0"
+        mvn"com.raquo::laminar::17.2.0",
+        mvn"io.github.nguyenyou::webawesome-laminar::0.4.0"
       )
 
     }
